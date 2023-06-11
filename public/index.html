@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<style>
+input
+{
+    font-size:24px;
+}
+</style>
+<head>
+  <meta charset="utf-8">
+  <title>Calcular Cuota Bobby Brown</title>
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+<body>
+
+<div class="jumbotron text-center">
+<h1>Calcular Cuota Bobby Brown</h1>
+</div>
+ 
+<div class="container">
+
+<div class="row">
+<div class="col-sm-12">
+<h2>¿Cual es la cuota total de la semana?</h2>
+<form id="form-total" action="" onkeydown="return event.key != 'Enter';">
+  <div>
+    <input id="total" type="number" name="quantity" min="1" max="30000">
+    <input id="bsubmit" type="submit">
+  </div>
+</form>
+<span></span>
+</div>
+</div>
+ 
+<div class="row">
+<div class="col-sm-12">
+<h2>¿Entre cuanta gente se reparte la cuota?</h2>
+<form id="form-num" action="" onkeydown="return event.key != 'Enter';">
+  <div>
+    <input id="npeople" type="number" name="quantity" min="1" max="10">
+    <input id="bsubmit" type="submit">
+  </div>
+</form>
+<span></span>
+</div>
+</div>
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="divhoras">
+<form id="form-horas" hidden  action="" onkeydown="return event.key != 'Enter';"> 
+  <h2>¿Cuantas horas hace cada una?</h2>
+  <div>
+    <h3>Persona 1</h3> 
+    <p>Nombre</p>
+    <input id="nombre" type="text" placeholder="Nombre">
+    <p>Horas cada día (Lunes/Martes/Miercoles/Jueves/Viernes/Sábado/Domingo). 0 si ese día no trabaja</p>
+    <input id="lunes" type="number" name="horas-Lunes" min="0" max="100" placeholder="0" value="0">
+    <input id="martes" type="number" name="horas-Martes" min="0" max="100" placeholder="0" value="0">
+    <input id="miercoles" type="number" name="horas-Miercoles" min="0" max="100" placeholder="0" value="0">
+    <input id="jueves" type="number" name="horas-Jueves" min="0" max="100" placeholder="0" value="0">
+    <input id="viernes"type="number" name="horas-Viernes" min="0" max="100" placeholder="0" value="0">
+    <input id="sabado" type="number" name="horas-Sabado" min="0" max="100" placeholder="0" value="0">
+    <input id="domingo" type="number" name="horas-Domingo" min="0" max="100" placeholder="0" value="0">
+  </div>
+</form>
+</div>
+</div>
+</div>
+
+
+<span></span>
+
+<div class="row">
+<div class="col-sm-12">
+<form id="form-result" hidden  action="" onkeydown="return event.key != 'Enter';"> 
+    <p>Calcular resultado: </p>
+    <input id="bsubmit" type="submit">
+</form>
+</div>
+</div>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="result" hidden>
+<h2>Resultado</h2>
+<textarea rows="60" cols="80">
+</textarea>
+</div>
+</div>
+</div>
+</div>
+
+
+ 
+<script>
+
+var n;
+var total;
+
+$( "#form-total" ).submit(function( event ) {
+    total = parseFloat($( "#total" ).val());  
+    $(this).find("#bsubmit").hide()
+    event.preventDefault( );
+});
+
+$( "#form-num" ).submit(function( event ) {
+    var i = 0;
+    n = $( "#npeople" ).val() 
+    for (i = 0; i < n; ++i) {
+      var newDiv = $( "#form-horas" ).clone();
+      newDiv.attr("id","form-horas-" + i.toString());
+      newDiv.find("h3").text("Persona " + (i+1).toString());
+      newDiv.appendTo( "#divhoras" ).show();
+    }
+    $( "#form-result" ).show();
+    $(this).find("#bsubmit").hide();
+    event.preventDefault( );
+});
+
+$( "#form-result" ).submit(function( event ) {
+    $( "#result" ).show();
+    var i;
+    var hourList = [];
+    var totalHoras = 0;
+    for (i = 0; i < n; ++i) {
+        var formObj = $( "#form-horas-" + i.toString());
+        var data = { 
+                    "nombre": formObj.find("#nombre").val(),
+                    "lunes": parseFloat(formObj.find("#lunes").val()),
+                    "martes": parseFloat(formObj.find("#martes").val()),
+                    "miercoles": parseFloat(formObj.find("#miercoles").val()),
+                    "jueves": parseFloat(formObj.find("#jueves").val()),
+                    "viernes": parseFloat(formObj.find("#viernes").val()),
+                    "sabado": parseFloat(formObj.find("#sabado").val()),
+                    "domingo": parseFloat(formObj.find("#domingo").val()),
+                    "semana": parseFloat(formObj.find("#lunes").val()) +  parseFloat(formObj.find("#martes").val())  +
+                               parseFloat(formObj.find("#miercoles").val()) +  parseFloat(formObj.find("#jueves").val()) +
+                                parseFloat(formObj.find("#viernes").val()) +  parseFloat(formObj.find("#sabado").val()) +  
+                                parseFloat(formObj.find("#domingo").val())
+                  };
+        totalHoras += data.semana;
+        hourList.push(data); 
+    }
+   
+    var precioHora = total.toFixed(2) / totalHoras;
+    
+    for (i=0;i < n; ++i) {
+        hourList[i].lunes *= precioHora;    
+        hourList[i].martes *= precioHora;    
+        hourList[i].miercoles *= precioHora;    
+        hourList[i].jueves *= precioHora;    
+        hourList[i].viernes *= precioHora;    
+        hourList[i].sabado *= precioHora;    
+        hourList[i].domingo *= precioHora;    
+        hourList[i].semana *= precioHora;    
+    
+        $("textarea").append("\n***********************\n");
+        $("textarea").append("* Nombre: " + hourList[i].nombre + "\n");
+        $("textarea").append("* Lunes: " +  hourList[i].lunes.toFixed(2) + "\n");
+        $("textarea").append("* Martes: " +  hourList[i].martes.toFixed(2) + "\n");
+        $("textarea").append("* Miercoles: " +  hourList[i].miercoles.toFixed(2) + "\n");
+        $("textarea").append("* Jueves: " +  hourList[i].jueves.toFixed(2) + "\n");
+        $("textarea").append("* Viernes: " +  hourList[i].viernes.toFixed(2) + "\n");
+        $("textarea").append("* Sábado: " +  hourList[i].sabado.toFixed(2) + "\n");
+        $("textarea").append("* Domingo: " +  hourList[i].domingo.toFixed(2) + "\n");
+        $("textarea").append("* Semana: " +  hourList[i].semana.toFixed(2) + "\n");
+
+    }
+    $(this).find("#bsubmit").hide();
+    event.preventDefault( );
+});
+
+</script>
+ 
+</body>
+</html>
